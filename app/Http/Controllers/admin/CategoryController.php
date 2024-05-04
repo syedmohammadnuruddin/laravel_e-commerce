@@ -143,4 +143,16 @@ class CategoryController extends Controller
             ]);
         }
     }
+    public function destroy($categoryId){
+        $category = Category::find($categoryId);
+        
+        File::delete(public_path().'/uploads/category/thumb/'.$category->image);
+        File::delete(public_path().'/uploads/category/'.$category->image);
+
+        $category->delete();
+
+        return redirect()->back()->with('success','Category deleted successfully');
+
+
+    }
 }
