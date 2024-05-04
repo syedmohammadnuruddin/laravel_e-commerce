@@ -46,5 +46,57 @@ class BrandController extends Controller
             ]);
         }
     }
+    public function edit($id){
+        $brand = Brand::find($id);
+        if(empty($brand)){
+            return redirect()->route('brands.index');
+        }
+        return view('admin.brands.edit', compact('brand'));
+    }
+    public function update(Request $request, $id){
+        $brand = Brand::find($id);
+
+        if(empty($brand)){
+            return response()->json([
+                'status' => false,
+                'notFound' => true,
+                'message' => 'Brand not found'
+            ]);
+        }
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'slug' => 'required|unique:brands,slug,'.$brand->id.',id',
+            'status' => 'required'
+        ]); 
+
+        if($validator->passes()){
+            
+            $brand->name = $request->name;
+            $brand->slug = $request->slug;
+            $brand->status = $request->status;
+            $brand->save();
+
+            $request->session()->flash('success', 'Brand Updated Successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Brand Updated Successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+    public function destroy($id){
+        $brand = Brand::find($id);
+    
+        $brand->delete();
+
+        return redirect()->back()->with('success','Brand deleted successfully');
+
+
+    }
     
 }
