@@ -8,7 +8,7 @@
                 <h1>Brands</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="{{ route('brands.create') }}" class="btn btn-primary">New Category</a>
+                <a href="{{ route('brands.create') }}" class="btn btn-primary">New Brand</a>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
            <form action="" method="get">
             <div class="card-header">
                 <div class="card-title">
-                    <button type="button" onclick="window.location.href='{{route('categories.index')}}'" class="btn btn-default btn-sm">Reset</button>
+                    <button type="button" onclick="window.location.href='{{route('brands.index')}}'" class="btn btn-default btn-sm">Reset</button>
                 </div>
                 <div class="card-tools">
                     <div class="input-group input-group" style="width: 250px;">

@@ -5,6 +5,8 @@ use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
+use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\BrandController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +61,14 @@ Route::group(['prefix'=>'admin'], function(){
         Route::put('/brands/{brand}',[BrandController::class, 'update'])->name('brands.update');
         Route::get('/brands/{brand}',[BrandController::class, 'destroy'])->name('brands.delete');
 
+
+        //Product Routes
+        Route::get('/products/create',[ProductController::class, 'create'])->name('products.create');
+        Route::post('/products',[ProductController::class, 'store'])->name('products.store');
+
+        Route::get('/product-subcategories',[ProductSubCategoryController::class, 'index'])->name('product-subcategories.index');
+       
+       
         // temp-images.create
         Route::post('/upload-temp-image',[TempImagesController::class, 'create'])->name('temp-images.create');
 
