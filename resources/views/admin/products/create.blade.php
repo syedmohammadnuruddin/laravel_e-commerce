@@ -8,7 +8,7 @@
                 <h1>Create Product</h1>
             </div>
             <div class="col-sm-6 text-right">
-                <a href="products.html" class="btn btn-primary">Back</a>
+                <a href="{{route('products.index')}}" class="btn btn-primary">Back</a>
             </div>
         </div>
     </div>
@@ -55,6 +55,9 @@
                             </div>
                         </div>
                     </div>	                                                                      
+                </div>
+                <div class="row" id="product-gallery">
+
                 </div>
                 <div class="card mb-3">
                     <div class="card-body">
@@ -178,7 +181,7 @@
         
         <div class="pb-5 pt-3">
             <button type="submit" class="btn btn-primary">Create</button>
-            <a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
+            <a href="produ{{route('products.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
         </div>
     </div>
    </form>
@@ -207,52 +210,43 @@
         });
         $('#productForm').submit(function(event){
             event.preventDefault();
-            var formArray = $(this).serializeArray();
-            var formData = {};
-            $("button[type='submit']").prop('disabled',true);
+            var formData = new FormData($(this)[0]); // Create FormData object from the form
 
-            // Convert the form array to an object for easier manipulation
-            formArray.forEach(function(input){
-                formData[input.name] = input.value;
-            });
-
-            // Check if the track_qty checkbox is checked
-            if ($('#track_qty').is(':checked')) {
-                // If checked, include the qty field in the payload
-                formData['track_qty'] = 'Yes';
-            } else {
-                // If not checked, set track_qty to 'No' and remove the qty field from the payload
-                formData['track_qty'] = 'No';
-                delete formData['qty'];
-            }
+            // Check if the track_qty checkbox is checked and include it in the form data
+            formData.append('track_qty', $('#track_qty').is(':checked') ? 'Yes' : 'No');
 
             $.ajax({
-                url: "{{route('products.store')}}",
+                url: "{{ route('products.store') }}",
                 type: 'post',
-                data: formData,
+                data: formData, // Send FormData object instead of serialized form data
+                contentType: false,
+                processData: false, // Important! Prevent jQuery from automatically processing the FormData
                 dataType: 'json',
                 success: function(response){
                     $("button[type='submit']").prop('disabled',false);
                     if(response['status'] == true){
-
+                        $(".error").removeClass('invalid-feedback').html('');
+                        $("input[type='text'], select, input[type='number']").removeClass('is-invalid');
+                        window.location.href="{{route('products.index')}}";
                     }else{
                         var errors = response['errors'];
                         $(".error").removeClass('invalid-feedback').html('');
-                        $("input[type='text'],select, input[type='number']").removeClass("is-invalid");
+                        $("input[type='text'], select, input[type='number']").removeClass('is-invalid');
 
                         $.each(errors, function(key,value){
                             $(`#${key}`).addClass('is-invalid')
-                                .siblings('p')
-                                .addClass('invalid-feedback')
-                                .html(value);
+                            .siblings('p')
+                            .addClass('invalid-feedback')
+                            .html(value);
                         });
                     }
                 },
                 error: function(){
-                    console.log("Something went wrong");
+                    console.log("something went wrong");
                 }
             });
         });
+
 
         $('#category').change(function(){
             var category_id = $(this).val();
@@ -273,6 +267,36 @@
                 }
             });
         });
+
+        Dropzone.autoDiscover = false;    
+        const dropzone = $("#image").dropzone({ 
+            url:  "{{ route('temp-images.create') }}",
+            maxFiles: 10,
+            paramName: 'image',
+            addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+            headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }, success: function(file, response){
+                var html = `<div class="col-md-3" id="image-row-${response.image_id}">
+                    <div class="card">
+                        <input type="hidden" name="image_array[]" value="${response.image_id}">
+                        <img src="${response.ImagePath}" class="card-img-top" alt="">
+                        <div class="card-body">
+                            <a href="javascript:void(0)" onclick="deleteImage(${response.image_id})" class="btn btn-danger">Delete</a>  
+                        </div> 
+                    </div>
+                </div>`;
+                $("#product-gallery").append(html);
+            },
+            complete: function(file){
+                this.removeFile(file);
+            }
+        });
+
+        function deleteImage(id){
+            $('#image-row-'+id).remove();
+        }
        
 </script>
 @endsection
