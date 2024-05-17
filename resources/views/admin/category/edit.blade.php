@@ -54,13 +54,22 @@
                         </div>									
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="status">Slug</label>
+                                <label for="status">Status</label>
                                 <select name="status" id="status" class="form-control">
                                     <option {{ ($category->status == 1) ? 'selected' : '' }} value="1">Active</option>
                                     <option {{ ($category->status == 0) ? 'selected' : '' }} value="0">Block</option>
                                 </select>
                             </div>
-                        </div>									
+                        </div>	
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="showHome">Show On Home</label>
+                                <select name="showHome" id="showHome" class="form-control">
+                                    <option {{ ($category->showHome == 'Yes') ? 'selected' : '' }} value="Yes">Yes</option>
+                                    <option {{ ($category->showHome == 'No') ? 'selected' : '' }} value="No">No</option>
+                                </select>
+                            </div>
+                        </div>								
                     </div>
                 </div>							
             </div>
