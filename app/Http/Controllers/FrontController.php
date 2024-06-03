@@ -19,6 +19,6 @@ class FrontController extends Controller
         ->get();
         $featuredProducts = Product::where('is_featured','Yes')->where('status',1)->orderBy('id','DESC')->get();
         $latestProducts = Product::orderBy('id','DESC')->where('status',1)->take(8)->get();
-        return view('front.home',compact('categories','featuredProducts'));
+        return view('front.home',compact('categories','featuredProducts','latestProducts'));
     }
 }
